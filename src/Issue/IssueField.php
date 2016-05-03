@@ -72,7 +72,7 @@ class IssueField implements \JsonSerializable
     public $project;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $environment;
 
@@ -92,7 +92,7 @@ class IssueField implements \JsonSerializable
     public $votes;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $resolution;
 
@@ -147,12 +147,12 @@ class IssueField implements \JsonSerializable
     public $aggregatetimeoriginalestimate;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $resolutiondate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     public $duedate;
 

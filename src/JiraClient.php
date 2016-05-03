@@ -208,7 +208,7 @@ class JiraClient
      *
      * @return mixed
      */
-    protected function extractErrors($result, array $responseCodes = [200], \Closure $callback)
+    public function extractErrors($result, array $responseCodes = [200], \Closure $callback)
     {
         if ($result instanceof JiraClientResponse &&
             !$result->hasErrors() &&
