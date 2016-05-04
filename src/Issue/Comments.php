@@ -20,7 +20,7 @@ class Comments implements \JsonSerializable
     public $total;
 
     /**
-     * @var CommentList[\JiraRestApi\Issue\Comment]
+     * @var \JiraRestApi\Issue\Comment[]
      */
     public $comments;
 

@@ -43,6 +43,11 @@ class JiraRestApiSilexServiceProvider implements ServiceProviderInterface
             return $app['jira.rest.service.builder']($className);
         });
 
+        $app['jira.rest.issuetype'] = $app->share(function() use ($app) {
+            $className = '\JiraRestApi\Issue\IssueTypeService';
+            return $app['jira.rest.service.builder']($className);
+        });
+
         $app['jira.rest.project'] = $app->share(function() use ($app) {
             $className = '\JiraRestApi\Project\ProjectService';
             return $app['jira.rest.service.builder']($className);
