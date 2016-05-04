@@ -106,7 +106,7 @@ class JiraClient
             $response = $this->transport->request($httpMethod, $url, $options);
             $this->log->info('JiraRestApi response: ', [$response->getHeaders(), (string) $response->getBody()]);
         } catch (RequestException $e) {
-            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), []);
+            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), [(string) $e->getRequest()->getBody(), $e->getRequest()->getHeaders(), (string) $e->getResponse()->getBody()]);
             $response = $e->getResponse();
         }
 
@@ -129,9 +129,9 @@ class JiraClient
 
         $options = [
             RequestOptions::HEADERS => [
-                'Accept' => '*/*',
-                'Content-Type' => 'multipart/form-data',
-                'X-Atlassian-Token' => 'nocheck'
+//                'Accept' => '*/*',
+//                'Content-Type' => 'multipart/form-data',
+                'X-Atlassian-Token' => 'no-check'
             ]
         ];
 
@@ -145,7 +145,14 @@ class JiraClient
                 continue;
             }
 
-            $options[RequestOptions::SINK] = $filePath;
+            $ex = explode("/",$filePath);
+            $options[RequestOptions::MULTIPART] = [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($filePath, 'r'),
+                    'filename' => end($ex)
+                ]
+            ];
 
             $this->log->info('JiraRestApi requestAsync: ', [Request::METHOD_POST, $url, $options]);
             $promises[] = $this->transport
@@ -154,7 +161,7 @@ class JiraClient
                     $this->log->info('JiraRestApi responseAsync: ', [$response->getHeaders(), (string) $response->getBody()]);
                     return $response;
                 }, function (RequestException $e) {
-                    $this->log->error('JiraRestApi responseAsync fail with code : ' . $e->getCode(), []);
+                    $this->log->error('JiraRestApi responseAsync fail with code : ' . $e->getCode(), [(string) $e->getRequest()->getBody(), $e->getRequest()->getHeaders(), (string) $e->getResponse()->getBody()]);
                     return $e->getResponse();
                 });
         }
@@ -208,7 +215,7 @@ class JiraClient
      *
      * @return mixed
      */
-    public function extractErrors($result, array $responseCodes = [200], \Closure $callback)
+    protected function extractErrors($result, array $responseCodes = [200], \Closure $callback)
     {
         if ($result instanceof JiraClientResponse &&
             !$result->hasErrors() &&
