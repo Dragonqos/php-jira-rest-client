@@ -129,8 +129,6 @@ class JiraClient
 
         $options = [
             RequestOptions::HEADERS => [
-//                'Accept' => '*/*',
-//                'Content-Type' => 'multipart/form-data',
                 'X-Atlassian-Token' => 'no-check'
             ]
         ];
