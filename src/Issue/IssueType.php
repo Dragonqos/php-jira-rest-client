@@ -15,17 +15,17 @@ class IssueType implements \JsonSerializable
     public $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $iconUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
     

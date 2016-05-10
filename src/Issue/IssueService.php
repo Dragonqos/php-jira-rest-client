@@ -5,7 +5,6 @@ namespace JiraRestApi\Issue;
 use JiraRestApi\JiraClient;
 use JiraRestApi\JiraClientResponse;
 use JiraRestApi\JiraException;
-use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class IssueService extends JiraClient
@@ -129,6 +128,17 @@ class IssueService extends JiraClient
         }
 
         return $resArr;
+    }
+
+    /**
+     * @param      $uri
+     * @param null $toResource
+     *
+     * @return mixed
+     */
+    public function getAttachmentStream($uri, $toResource = null)
+    {
+        return $this->download($uri, $toResource);
     }
 
     /**

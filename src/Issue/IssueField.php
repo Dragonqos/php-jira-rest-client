@@ -27,12 +27,12 @@ class IssueField implements \JsonSerializable
     public $issuetype;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $timespent;
 
     /**
-     * @var \JiraRestApi\Issue\Reporter
+     * @var \JiraRestApi\Issue\Reporter|null
      */
     public $reporter;
 
@@ -47,7 +47,7 @@ class IssueField implements \JsonSerializable
 //    public $updated;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
@@ -117,7 +117,7 @@ class IssueField implements \JsonSerializable
     public $worklog;
 
     /**
-     * @var \JiraRestApi\Issue\Reporter
+     * @var \JiraRestApi\Issue\Reporter|null
      */
     public $assignee;
 
@@ -137,12 +137,12 @@ class IssueField implements \JsonSerializable
     public $aggregatetimespent;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $timeestimate;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $aggregatetimeoriginalestimate;
 
@@ -257,6 +257,11 @@ class IssueField implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @param string|null $description
+     *
+     * @return $this
+     */
     public function setDescription($description)
     {
         $this->description = $description;
