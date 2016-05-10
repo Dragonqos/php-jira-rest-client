@@ -257,6 +257,11 @@ class IssueField implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @param string|null $description
+     *
+     * @return $this
+     */
     public function setDescription($description)
     {
         $this->description = $description;
