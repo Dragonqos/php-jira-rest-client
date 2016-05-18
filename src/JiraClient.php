@@ -3,6 +3,7 @@
 namespace JiraRestApi;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\RequestOptions;
 use JiraRestApi\Interfaces\ConfigurationInterface;
@@ -27,7 +28,7 @@ class JiraClient
      *
      * @var string
      */
-    private $api_uri = '/rest/api/2';
+    protected $api_uri = '/rest/api/2';
 
     /**
      * Logger instance.
@@ -63,7 +64,7 @@ class JiraClient
         $this->json_mapper->bEnforceMapType = false;
         $this->json_mapper->setLogger($log);
         $this->json_mapper->undefinedPropertyHandler = function ($obj, $val) {
-            $this->log->notice('Handle undefined property', [$val, $obj]);
+            $this->log->debug('Handle undefined property', [$val, $obj]);
         };
 
         $this->log = $log;
@@ -102,14 +103,19 @@ class JiraClient
         }
 
         try {
-            $this->log->notice('JiraRestApi request: ', [$httpMethod, $url, $options]);
+            $this->log->info('JiraRestApi request: ', [$httpMethod, $url, $options]);
             $response = $this->transport->request($httpMethod, $url, $options);
+            $this->log->info('JiraRestApi response: ', [$response->getHeaders(), (string)$response->getBody()]);
+        } catch (ConnectException $e) {
+            $this->log->critical('JiraRestApi connection exception: ', [$e->getMessage()]);
         } catch (RequestException $e) {
-            $this->log->notice('JiraRestApi response fail with code : ' . $e->getCode(), []);
+            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), [(string)$e->getRequest()->getBody(), $e->getRequest()->getHeaders(), (string)$e->getResponse()->getBody()]);
             $response = $e->getResponse();
         }
 
-        return $this->parseResponse($response);
+        return isset($response) && $response instanceof ResponseInterface
+            ? $this->parseResponse($response)
+            : false;
     }
 
     /**
@@ -128,45 +134,90 @@ class JiraClient
 
         $options = [
             RequestOptions::HEADERS => [
-                'Accept' => '*/*',
-                'Content-Type' => 'multipart/form-data',
-                'X-Atlassian-Token' => 'nocheck'
+                'X-Atlassian-Token' => 'no-check'
             ]
         ];
 
         $promises = [];
 
-        foreach ($filePathArray as $filePath) {
-            // load each files separately
-            if (file_exists($filePath) == false) {
-                // Ignore if file not found
-                $this->log->error('JiraRestApi: Unable to upload file "' . $filePath . '". File not Found');
-                continue;
+        if(!empty($filePathArray)) {
+
+            foreach ($filePathArray as $filename => $filePath) {
+                // load each files separately
+                if (file_exists($filePath) == false) {
+                    // Ignore if file not found
+                    $this->log->error('JiraRestApi: Unable to upload file "' . $filePath . '". File not Found');
+                    continue;
+                }
+
+                $ex = explode("/", $filePath);
+                $options[RequestOptions::MULTIPART] = [
+                    [
+                        'name'     => 'file',
+                        'contents' => fopen($filePath, 'r'),
+                        'filename' => is_numeric($filename) ? end($ex) : $filename
+                    ]
+                ];
+
+                $this->log->info('JiraRestApi requestAsync: ', [Request::METHOD_POST, $url, $options]);
+                $promises[] = $this->transport
+                    ->requestAsync(Request::METHOD_POST, $url, $options)
+                    ->then(function (ResponseInterface $response) {
+                        $this->log->info('JiraRestApi responseAsync: ', [$response->getHeaders(), (string) $response->getBody()]);
+                        return $response;
+                    }, function (RequestException $e) {
+                        if($e instanceof ConnectException) {
+                            $this->log->critical('JiraRestApi connection exception: ', [$e->getMessage()]);
+                            return false;
+                        } else {
+                            $this->log->error('JiraRestApi responseAsync fail with code : ' . $e->getCode(), [(string) $e->getRequest()->getBody(), $e->getRequest()->getHeaders(), (string) $e->getResponse()->getBody()]);
+                            return $e->getResponse();
+                        }
+                    });
             }
 
-            $options[RequestOptions::SINK] = $filePath;
+            $responses = \GuzzleHttp\Promise\settle($promises)->wait();
 
-            $this->log->notice('JiraRestApi requestAsync: ', [Request::METHOD_POST, $url, $options]);
-            $promises[] = $this->transport
-                ->requestAsync(Request::METHOD_POST, $url, $options)
-                ->then(function (ResponseInterface $response) {
-                    return $response;
-                }, function (RequestException $e) {
-                    $this->log->notice('JiraRestApi responseAsync fail with code : ' . $e->getCode(), []);
-                    return $e->getResponse();
-                });
-        }
-
-        $responses = \GuzzleHttp\Promise\settle($promises)->wait();
-
-        $result = [];
-        foreach ($responses as $response) {
-            if (isset($response['value']) && $response['value'] instanceof ResponseInterface) {
-                $result[] = $this->parseResponse($response['value']);
+            $result = [];
+            foreach ($responses as $response) {
+                if (isset($response['value']) && $response['value'] instanceof ResponseInterface) {
+                    $result[] = $this->parseResponse($response['value']);
+                }
             }
+
+            return $result;
         }
 
-        return $result;
+        return false;
+    }
+
+    /**
+     * Access to JiraResources using JiraCredentials
+     * @param $fromUrl
+     * @param $toResource
+     *
+     * @return mixed
+     */
+    public function download($fromUrl, $toResource = null)
+    {
+        $options = is_null($toResource)
+            ? [RequestOptions::STREAM => true]
+            : [RequestOptions::SINK => $toResource];
+
+        try {
+            $this->log->info('JiraRestApi request: ', ['GET', $fromUrl, $options]);
+            $response = $this->transport->get($fromUrl, $options);
+            $this->log->info('JiraRestApi response: ', [$response->getHeaders()]);
+        } catch (ConnectException $e) {
+            $this->log->critical('JiraRestApi connection exception: ', [$e->getMessage()]);
+        } catch (RequestException $e) {
+            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), [(string) $e->getRequest()->getBody(), $e->getRequest()->getHeaders()]);
+            $response = $e->getResponse();
+        }
+
+        return isset($response) && $response instanceof ResponseInterface
+            ? $response
+            : false;
     }
 
     /**
@@ -215,7 +266,7 @@ class JiraClient
             return $callback();
         }
 
-        if (!in_array($result->getCode(), $responseCodes)) {
+        if ($result && !in_array($result->getCode(), $responseCodes)) {
             $result->setError('Unexpected response code, expected "' . implode(', ', $responseCodes) . '", ' . $result->getCode() . ' given');
         }
 
@@ -242,5 +293,13 @@ class JiraClient
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    /**
+     * @return \JsonMapper
+     */
+    public function getJsonMapper()
+    {
+        return $this->json_mapper;
     }
 }
