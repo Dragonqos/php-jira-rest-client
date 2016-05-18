@@ -54,35 +54,49 @@ class Project
     public $projectCategory;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
     /**
      * Project leader info
      *
-     * @var array 
+     * @var array
      */
     public $lead;
 
-    /* @var ComponentList[\JiraRestApi\Project\Component] */
+    /**
+     * @var \JiraRestApi\Project\Component[]
+     */
     public $components;
 
-    /* @var IssueTypeList[\JiraRestApi\Issue\IssueType] */
+    /**
+     * @var \JiraRestApi\Issue\IssueType[]
+     */
     public $issueTypes;
 
-    /* @var string */
+    /**
+     * @var string|null
+     */
     public $assigneeType;
 
-    /* @var array */
+    /**
+     * @var array
+     */
     public $versions;
 
-    /* @var array */
+    /**
+     * @var array
+     */
     public $roles;
 
-    /* @var string */
+    /**
+     * @var string|null
+     */
     public $url;
 
-    /* @var string */
+    /**
+     * @var string|null
+     */
     public $email;
 }

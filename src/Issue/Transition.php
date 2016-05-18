@@ -10,17 +10,17 @@ class TransitionTo
     public $self;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $iconUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
 

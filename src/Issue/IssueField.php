@@ -27,12 +27,12 @@ class IssueField implements \JsonSerializable
     public $issuetype;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $timespent;
 
     /**
-     * @var \JiraRestApi\Issue\Reporter
+     * @var \JiraRestApi\Issue\Reporter|null
      */
     public $reporter;
 
@@ -47,7 +47,7 @@ class IssueField implements \JsonSerializable
 //    public $updated;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
@@ -72,7 +72,7 @@ class IssueField implements \JsonSerializable
     public $project;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $environment;
 
@@ -92,7 +92,7 @@ class IssueField implements \JsonSerializable
     public $votes;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $resolution;
 
@@ -109,7 +109,7 @@ class IssueField implements \JsonSerializable
     /**
      * @var object
      */
-    public $watcher;
+    public $watches;
 
     /**
      * @var object
@@ -117,7 +117,7 @@ class IssueField implements \JsonSerializable
     public $worklog;
 
     /**
-     * @var \JiraRestApi\Issue\Reporter
+     * @var \JiraRestApi\Issue\Reporter|null
      */
     public $assignee;
 
@@ -132,27 +132,27 @@ class IssueField implements \JsonSerializable
     public $attachment;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $aggregatetimespent;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $timeestimate;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $aggregatetimeoriginalestimate;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $resolutiondate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     public $duedate;
 
@@ -167,27 +167,27 @@ class IssueField implements \JsonSerializable
     public $subtasks;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $workratio;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $aggregatetimeestimate;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $aggregateprogress;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $lastViewed;
 
     /**
-     * @var object
+     * @var object|null
      */
     public $timeoriginalestimate;
 
@@ -234,7 +234,7 @@ class IssueField implements \JsonSerializable
             $this->project = new Project();
         }
 
-        $this->project->key = $key;
+        $this->project->key = (string) $key;
 
         return $this;
     }
@@ -245,7 +245,7 @@ class IssueField implements \JsonSerializable
             $this->project = new Project();
         }
 
-        $this->project->id = $id;
+        $this->project->id = (string) $id;
 
         return $this;
     }
@@ -257,6 +257,11 @@ class IssueField implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @param string|null $description
+     *
+     * @return $this
+     */
     public function setDescription($description)
     {
         $this->description = $description;
@@ -270,7 +275,7 @@ class IssueField implements \JsonSerializable
             $this->reporter = new Reporter();
         }
 
-        $this->reporter->name = $name;
+        $this->reporter->name = (string) $name;
 
         return $this;
     }
@@ -281,7 +286,18 @@ class IssueField implements \JsonSerializable
             $this->assignee = new Reporter();
         }
 
-        $this->assignee->name = $name;
+        $this->assignee->name = (string) $name;
+
+        return $this;
+    }
+
+    public function setPriorityId($id)
+    {
+        if (is_null($this->priority)) {
+            $this->priority = new Priority();
+        }
+
+        $this->priority->id = (string) $id;
 
         return $this;
     }
@@ -292,7 +308,7 @@ class IssueField implements \JsonSerializable
             $this->priority = new Priority();
         }
 
-        $this->priority->name = $name;
+        $this->priority->name = (string) $name;
 
         return $this;
     }
@@ -304,7 +320,7 @@ class IssueField implements \JsonSerializable
         }
 
         $v = new Version();
-        $v->name = $name;
+        $v->name = (string) $name;
 
         array_push($this->versions, $v);
 
@@ -333,17 +349,24 @@ class IssueField implements \JsonSerializable
         return $this;
     }
 
-    public function setIssueType($name)
+    public function setIssueTypeName($name)
     {
-        if (is_string($name)) {
-            if (is_null($this->issuetype)) {
-                $this->issuetype = new IssueType();
-            }
-
-            $this->issuetype->name = $name;
-        } else {
-            $this->issuetype = $name;
+        if (is_null($this->issuetype)) {
+            $this->issuetype = new IssueType();
         }
+
+        $this->issuetype->name = (string) $name;
+
+        return $this;
+    }
+
+    public function setIssueTypeId($id)
+    {
+        if (is_null($this->issuetype)) {
+            $this->issuetype = new IssueType();
+        }
+
+        $this->issuetype->id = (string) $id;
 
         return $this;
     }

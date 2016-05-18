@@ -15,17 +15,17 @@ class IssueType implements \JsonSerializable
     public $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $iconUrl;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
     
@@ -33,6 +33,11 @@ class IssueType implements \JsonSerializable
      * @var bool
      */
     public $subtask;
+
+    /**
+     * @var int|null
+     */
+    public $avatarId;
 
     public function jsonSerialize()
     {

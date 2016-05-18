@@ -15,17 +15,17 @@ class Version implements \JsonSerializable
     public $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $archived;
 
