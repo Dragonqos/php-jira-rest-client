@@ -1,5 +1,5 @@
 # Installation
-## Version 1.7.3
+## Version 1.7.4
 
 [![Build Status](https://travis-ci.org/Dragonqos/php-jira-rest-client.svg?branch=master)](https://travis-ci.org/Dragonqos/php-jira-rest-client)
 
