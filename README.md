@@ -2,6 +2,7 @@
 ## Version 1.8.0
 
 [![Build Status](https://travis-ci.org/Dragonqos/php-jira-rest-client.svg?branch=master)](https://travis-ci.org/Dragonqos/php-jira-rest-client)
+[![Code Coverage](https://scrutinizer-ci.com/g/Dragonqos/php-jira-rest-client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Dragonqos/php-jira-rest-client/?branch=master)
 
 Based on https://github.com/lesstif/php-jira-rest-client - modified by Dragonqos.
 Documentation in progress but most usability is left intact.
