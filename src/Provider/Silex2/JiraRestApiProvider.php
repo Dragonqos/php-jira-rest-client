@@ -1,34 +1,35 @@
 <?php
 
-namespace JiraRestApi;
+namespace JiraRestApi\Provider\Silex2;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use JiraRestApi\Configuration\ArrayConfiguration;
+use Pimple\Container;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
+use Pimple\ServiceProviderInterface;
 
-class JiraRestApiSilexServiceProvider implements ServiceProviderInterface
+class JiraRestApiProvider implements ServiceProviderInterface
 {
     /**
-     * @param Application $app
+     * @param Container $app
      */
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['jira.config'] = [];
 
-        $app['jira.rest.transport'] = $app->share(function () use ($app) {
+        $app['jira.rest.transport'] = function () use ($app) {
             $cfg = $app['jira.rest.configuration'];
 
             return new Client([
                 'base_uri' => $cfg->getJiraHost(),
                 RequestOptions::AUTH => [$cfg->getJiraUser(), $cfg->getJiraPassword()]
             ]);
-        });
+        };
 
-        $app['jira.rest.configuration'] = $app->share(function() use ($app) {
+        $app['jira.rest.configuration'] = function() use ($app) {
             return new ArrayConfiguration($app['jira.config']);
-        });
+        };
 
         $app['jira.rest.service.builder'] = $app->protect(function($serviceName) use ($app) {
             if(class_exists($serviceName)) {
@@ -38,31 +39,24 @@ class JiraRestApiSilexServiceProvider implements ServiceProviderInterface
             throw new \Exception('Service ' . $serviceName .' not found');
         });
 
-        $app['jira.rest.issue'] = $app->share(function() use ($app) {
+        $app['jira.rest.issue'] = function() use ($app) {
             $className = '\JiraRestApi\Issue\IssueService';
             return $app['jira.rest.service.builder']($className);
-        });
+        };
 
-        $app['jira.rest.issuetype'] = $app->share(function() use ($app) {
+        $app['jira.rest.issuetype'] = function() use ($app) {
             $className = '\JiraRestApi\Issue\IssueTypeService';
             return $app['jira.rest.service.builder']($className);
-        });
+        };
 
-        $app['jira.rest.project'] = $app->share(function() use ($app) {
+        $app['jira.rest.project'] = function() use ($app) {
             $className = '\JiraRestApi\Project\ProjectService';
             return $app['jira.rest.service.builder']($className);
-        });
+        };
 
-        $app['jira.rest.webhook'] = $app->share(function() use ($app) {
+        $app['jira.rest.webhook'] = function() use ($app) {
             $className = '\JiraRestApi\Webhook\WebhookService';
             return $app['jira.rest.service.builder']($className);
-        });
-    }
-
-    /**
-     * @param Application $app
-     */
-    public function boot(Application $app)
-    {
+        };
     }
 }

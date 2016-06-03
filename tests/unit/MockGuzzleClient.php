@@ -5,7 +5,7 @@ namespace JiraRestApi\Tests;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use JiraRestApi\JiraRestApiSilexServiceProvider;
+use JiraRestApi\Provider\Silex2\JiraRestApiProvider;
 use Monolog\Logger;
 use Silex\Application;
 use Silex\Provider\MonologServiceProvider;
@@ -36,16 +36,16 @@ class MockGuzzleClient extends \PHPUnit_Framework_TestCase
             'monolog.level' => Logger::INFO
         ]);
 
-        $app->register(new JiraRestApiSilexServiceProvider(), ['jira.config' => [
+        $app->register(new JiraRestApiProvider(), ['jira.config' => [
             'jiraHost' => 'https://jira.atlassian.com',
             'jiraUsername' => 'anonymous',
             'jiraPassword' => ''
         ]]);
 
         $this->mockHandler = new MockHandler();
-        $app['jira.rest.transport'] = $app->share(function () {
+        $app['jira.rest.transport'] = function () {
             return new Client(['handler' => HandlerStack::create($this->mockHandler)]);
-        });
+        };
 
         $this->app = $app;
     }
