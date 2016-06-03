@@ -1,5 +1,5 @@
 # Installation
-## Version 1.7.4
+## Version 1.8.0
 
 [![Build Status](https://travis-ci.org/Dragonqos/php-jira-rest-client.svg?branch=master)](https://travis-ci.org/Dragonqos/php-jira-rest-client)
 
@@ -7,13 +7,14 @@ Based on https://github.com/lesstif/php-jira-rest-client - modified by Dragonqos
 Documentation in progress but most usability is left intact.
 
 # Differences
-* Add SilexServiceProvider
+* Add Silex ServiceProvider 1.3
+* Add Silex ServiceProvider 2.0
 * ClientResponse Wrapper
 * cURL changed to Guzzle 6
 * Added unit test for base functionality
+* Move Silex to dev-dependency
 
 # TODO
-* Remove Silex from dependency
 * Cleaning the Code
 * More Services
 * More tests
