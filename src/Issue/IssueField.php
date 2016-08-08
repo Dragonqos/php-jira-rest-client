@@ -41,10 +41,10 @@ class IssueField implements \JsonSerializable
      */
     public $created;
 
-//    /**
-//     * @var \DateTime
-//     */
-//    public $updated;
+    /**
+     * @var \DateTime
+     */
+    public $updated;
 
     /**
      * @var string|null

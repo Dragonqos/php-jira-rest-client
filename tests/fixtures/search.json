@@ -112,7 +112,8 @@
             "issueId": "10002"
           }
         ],
-        "updated": 1,
+        "created": "2016-08-05T08:28:16.672+0000",
+        "updated": "2016-08-05T08:28:16.672+0000",
         "timetracking": {
           "originalEstimate": "10m",
           "remainingEstimate": "3m",
