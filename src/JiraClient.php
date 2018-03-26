@@ -109,7 +109,12 @@ class JiraClient
         } catch (ConnectException $e) {
             $this->log->critical('JiraRestApi connection exception: ', [$e->getMessage()]);
         } catch (RequestException $e) {
-            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), [(string)$e->getRequest()->getBody(), $e->getRequest()->getHeaders(), (string)$e->getResponse()->getBody()]);
+            $this->log->error('JiraRestApi response fail with code : ' . $e->getCode(), [
+                $httpMethod, $url, $options,
+                (string)$e->getRequest()->getBody(),
+                $e->getRequest()->getHeaders(),
+                (string)$e->getResponse()->getBody()
+            ]);g
             $response = $e->getResponse();
         }
 
