@@ -64,7 +64,7 @@ class JiraClient
         $this->json_mapper->bEnforceMapType = false;
         $this->json_mapper->setLogger($log);
         $this->json_mapper->undefinedPropertyHandler = function ($obj, $val) {
-            $this->log->debug('Handle undefined property', [$val, $obj]);
+            $this->log->debug('Handle undefined property', [$val, get_class($obj)]);
         };
 
         $this->log = $log;
@@ -103,9 +103,9 @@ class JiraClient
         }
 
         try {
-            $this->log->info('JiraRestApi request: ', [$httpMethod, $url, $options]);
+            $this->log->debug('JiraRestApi request: ', [$httpMethod, $url, $options]);
             $response = $this->transport->request($httpMethod, $url, $options);
-            $this->log->info('JiraRestApi response: ', [$response->getHeaders(), (string)$response->getBody()]);
+//            $this->log->info('JiraRestApi response: ', [$response->getHeaders(), (string)$response->getBody()]);
         } catch (ConnectException $e) {
             $this->log->critical('JiraRestApi connection exception: ', [$e->getMessage()]);
         } catch (RequestException $e) {
@@ -114,7 +114,7 @@ class JiraClient
                 (string)$e->getRequest()->getBody(),
                 $e->getRequest()->getHeaders(),
                 (string)$e->getResponse()->getBody()
-            ]);g
+            ]);
             $response = $e->getResponse();
         }
 

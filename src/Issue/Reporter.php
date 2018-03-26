@@ -30,6 +30,16 @@ class Reporter implements \JsonSerializable
     public $displayName;
 
     /**
+     * @var string
+     */
+    public $key;
+
+    /**
+     * @var string
+     */
+    public $accountId;
+
+    /**
      * @var bool
      */
     public $active;
