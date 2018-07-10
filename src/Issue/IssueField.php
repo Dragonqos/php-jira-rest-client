@@ -31,7 +31,6 @@ class IssueField implements \JsonSerializable
      */
     public $timespent;
 
-
     /**
      * @var \JiraRestApi\Issue\Reporter|null
      */
@@ -372,3 +371,4 @@ class IssueField implements \JsonSerializable
         return $this;
     }
 }
+
