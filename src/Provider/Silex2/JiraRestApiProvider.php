@@ -23,7 +23,8 @@ class JiraRestApiProvider implements ServiceProviderInterface
 
             return new Client([
                 'base_uri' => $cfg->getJiraHost(),
-                RequestOptions::AUTH => [$cfg->getJiraUser(), $cfg->getJiraPassword()]
+//                RequestOptions::AUTH => [$cfg->getJiraUser(), $cfg->getJiraPassword()]
+                RequestOptions::AUTH => [$cfg->getJiraUser(), $cfg->getJiraToken()]
             ]);
         };
 

@@ -32,6 +32,13 @@ abstract class AbstractConfiguration implements ConfigurationInterface
     protected $jiraPassword;
 
     /**
+     * Jira token.
+     *
+     * @var string
+     */
+    protected $jiraToken;
+
+    /**
      * @return string
      */
     public function getJiraHost()
@@ -53,5 +60,13 @@ abstract class AbstractConfiguration implements ConfigurationInterface
     public function getJiraPassword()
     {
         return $this->jiraPassword;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJiraToken()
+    {
+        return $this->jiraToken;
     }
 }
